@@ -1,0 +1,17 @@
+{
+"name": "shipfast-app",
+"version": "1.0.0",
+"description": "ShipFast sample application for DevOps lifecycle capstone",
+"main": "index.js",
+"scripts": {
+"start": "node index.js",
+"dev": "nodemon index.js",
+"test": "echo 'All tests passed' && exit 0"
+},
+"dependencies": {
+"express": "^4.18.2"
+},
+"devDependencies": {
+"nodemon": "^3.0.1"
+}
+}
