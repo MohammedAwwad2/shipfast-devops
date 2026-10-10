@@ -1,0 +1,13 @@
+[Unit]
+Description={{ app_description }}
+After=network.target
+
+[Service]
+Type=simple
+User={{ app_user }}
+WorkingDirectory={{ app_directory }}
+ExecStart={{ app_command }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
