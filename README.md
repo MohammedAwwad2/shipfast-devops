@@ -93,10 +93,8 @@ docker pull ghcr.io/mohammedawwad2/shipfast-app:1.0.0
 
 Tags `1.0.0` and `latest` point at the same digest.
 
-> **Note:** the package is currently private, so the pull above needs
-> `docker login ghcr.io`. Week 6 pulls the image anonymously from Kubernetes and
-> will fail with `ImagePullBackOff` until the package visibility is changed to
-> public in the GitHub package settings.
+The package is public, so the pull above needs no credentials. This matters for
+Week 6, where Kubernetes pulls the image anonymously.
 
 ## Ansible deployment
 
