@@ -1,8 +1,23 @@
-
+# Secrets and signing keys -- never commit these
 .env
-*.log
-.terraform/
-node_modules/
-npm-debug.log*
-*.tfstate*
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
 cosign.key
+id_rsa
+id_ed25519
+
+# Public keys are fine to commit (cosign.pub is tracked on purpose)
+!*.pub
+
+# Build output and dependencies
+node_modules/
+.terraform/
+*.tfstate*
+
+# Logs
+*.log
+npm-debug.log*
