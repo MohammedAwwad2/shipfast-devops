@@ -1,0 +1,31 @@
+# Build stage: full Node image, needs npm and a shell.
+FROM node:24-alpine AS build
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY . .
+
+# Runtime stage: distroless. No shell, no package manager, no npm.
+# The :nonroot variant already runs as uid 65532 and its ENTRYPOINT is node,
+# so CMD carries only the script path, not the word "node".
+FROM gcr.io/distroless/nodejs24-debian12:nonroot
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=build --chown=nonroot:nonroot /app /app
+
+EXPOSE 3000
+
+ARG REPO_URL
+LABEL org.opencontainers.image.source=${REPO_URL}
+
+# No HEALTHCHECK here on purpose: distroless carries no shell and no wget, so
+# the Milestone 2 health check cannot run. Health is checked from outside the
+# container instead (Compose, or a Kubernetes httpGet probe).
+
+CMD ["index.js"]
