@@ -11,10 +11,21 @@ app/                             Express app, static page, tests, Dockerfile
 app/Dockerfile                   Production image, non-root, with a health check
 app/.dockerignore                Keeps the build context to a few kilobytes
 advanced/ansible/                Inventory, playbook, and systemd service template
+advanced/docker/                 Distroless build, SBOM, cosign public key, hardening report
 docker-compose.yml               Single-service Compose definition
 bootstrap.sh                     Checks local tools, installs deps, starts the app
-shipfast-containerisation.pdf    Milestone 2 report with verified command output
+docs/week-3/                     Assignment reports with verified command output
 ```
+
+## Reports
+
+Written up with the captured output of every command, under `docs/week-3/`:
+
+| Report | Covers |
+| --- | --- |
+| `shipfast-containerisation.pdf` | Milestone 2 — Dockerfile, Compose, GHCR |
+| `week3-progress-check.pdf` | Checkpoints 1–5 and the Week 2 review |
+| `shipfast-a3-harden-and-sign.pdf` | Lab A3 — distroless, SBOM, Cosign |
 
 ## Local development
 
