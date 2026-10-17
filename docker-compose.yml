@@ -1,0 +1,23 @@
+services:
+  shipfast:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        REPO_URL: https://github.com/MohammedAwwad2/shipfast-devops
+    image: shipfast-devops:v1.0.0
+    container_name: shipfast
+    ports:
+      - "3000:3000"
+    environment:
+      APP_ENV: development
+      PORT: "3000"
+      APP_VERSION: "1.0.0"
+    restart: unless-stopped
+    networks:
+      - shipfast-network
+
+networks:
+  shipfast-network:
+    name: shipfast-network
+    driver: bridge
