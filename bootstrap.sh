@@ -50,4 +50,5 @@ log "Git: $(git --version)"
 
 log "Installing app dependencies..."
 npm --prefix "$ROOT_DIR/app" ci
-log "Bootstrap complete. Start the app with: cd app && npm start"
+log "Bootstrap complete. Starting the app..."
+exec npm --prefix "$ROOT_DIR/app" start
