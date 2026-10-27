@@ -1,0 +1,19 @@
+### Terraform install -- HashiCorp apt repo, per the official docs ###
+$ cat /etc/apt/sources.list.d/hashicorp.list
+deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com resolute main
+
+$ dpkg -l terraform
+ii  terraform      1.17.0-1     amd64        Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
+
+$ terraform version
+Terraform v1.17.0
+on linux_amd64
++ provider registry.terraform.io/hashicorp/aws v5.100.0
+
+
+$ aws sts get-caller-identity
+{
+    "UserId": "AIDAXA74BQCPM5ARYUL6K",
+    "Account": "483175530654",
+    "Arn": "arn:aws:iam::483175530654:user/adminUser"
+}
