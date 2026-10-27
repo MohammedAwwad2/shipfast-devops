@@ -1,0 +1,47 @@
+$ terraform fmt
+main.tf
+
+$ terraform validate
+Success! The configuration is valid.
+
+$ terraform output
+bucket_arn = "arn:aws:s3:::shipfast-artifacts-dev-483175530654"
+bucket_name = "shipfast-artifacts-dev-483175530654"
+
+$ aws s3api get-bucket-versioning --bucket shipfast-artifacts-dev-483175530654
+{
+    "Status": "Enabled"
+}
+
+$ aws s3api get-bucket-encryption --bucket shipfast-artifacts-dev-483175530654
+{
+    "ServerSideEncryptionConfiguration": {
+        "Rules": [
+            {
+                "ApplyServerSideEncryptionByDefault": {
+                    "SSEAlgorithm": "AES256"
+                },
+                "BucketKeyEnabled": false,
+                "BlockedEncryptionTypes": {
+                    "EncryptionType": [
+                        "SSE-C"
+                    ]
+                }
+            }
+        ]
+    }
+}
+
+$ head -6 terraform.tfstate
+{
+  "version": 4,
+  "terraform_version": "1.17.0",
+  "serial": 15,
+  "lineage": "6cdb4232-276c-7d22-9831-b53af1cd1da1",
+  "outputs": {
+
+$ terraform state list
+data.aws_caller_identity.current
+aws_s3_bucket.artifacts
+aws_s3_bucket_server_side_encryption_configuration.artifacts
+aws_s3_bucket_versioning.artifacts
