@@ -1,7 +1,0 @@
-### EXPERIMENT 1: apply again, no changes ###
-Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-bucket_arn = "arn:aws:s3:::shipfast-artifacts-dev-483175530654"
-bucket_name = "shipfast-artifacts-dev-483175530654"

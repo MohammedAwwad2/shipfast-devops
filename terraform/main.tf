@@ -1,13 +1,13 @@
 terraform {
-  required_version = ">= 1.6.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
+required_version = ">= 1.6.0"
+required_providers {
+aws = {
+source  = "hashicorp/aws"
+version = "~> 5.0"
 }
+}
+}
+
 
 # TODO 1: variable "environment" (string, default "dev")
 variable "environment" {
@@ -24,41 +24,36 @@ variable "region" {
 }
 
 # TODO 3: provider "aws" with only the region.
-#         No access keys, ever -- Terraform reads the same credential
-#         chain as the AWS CLI (the profile configured in A1).
 provider "aws" {
   region = var.region
 }
 
-# TODO 4: look up your own AWS account ID, so the bucket name can be unique.
-#         S3 bucket names are global, so the account ID is what keeps
-#         "shipfast-artifacts-dev" from colliding with somebody else's.
+# TODO 4: look up your own AWS account ID, so the bucket name can be unique
 data "aws_caller_identity" "current" {}
 
 # TODO 5: the S3 bucket
-resource "aws_s3_bucket" "artifacts" {
-  bucket = "shipfast-artifacts-${var.environment}-${data.aws_caller_identity.current.account_id}"
+resource "aws_s3_bucket" "my_bucket" {
+  # Example output: mohammad-test-123456789012-dev
+  bucket = "mohammad-test-${data.aws_caller_identity.current.account_id}-${var.environment}"
 
   tags = {
     Environment = var.environment
-    ManagedBy   = "terraform"
-    Project     = "shipfast-devops"
+    Owner       = "Mohammad"
   }
 }
 
-# TODO 6: turn versioning on for that bucket
-resource "aws_s3_bucket_versioning" "artifacts" {
-  bucket = aws_s3_bucket.artifacts.id
 
+# TODO 6: turn versioning on
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.my_bucket.id
   versioning_configuration {
     status = "Enabled"
   }
 }
 
-# TODO 7: default encryption (AES256) for that bucket
-resource "aws_s3_bucket_server_side_encryption_configuration" "artifacts" {
-  bucket = aws_s3_bucket.artifacts.id
-
+# TODO 7: default encryption (AES256)
+resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
+  bucket = aws_s3_bucket.my_bucket.id
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
@@ -68,12 +63,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "artifacts" {
 
 # TODO 8: output the bucket name
 output "bucket_name" {
-  value       = aws_s3_bucket.artifacts.id
-  description = "The name of the ShipFast artifacts bucket"
+  value = aws_s3_bucket.my_bucket.id
 }
 
 # TODO 9: output the bucket ARN
 output "bucket_arn" {
-  value       = aws_s3_bucket.artifacts.arn
-  description = "The ARN of the ShipFast artifacts bucket"
+  value = aws_s3_bucket.my_bucket.arn
 }
+
