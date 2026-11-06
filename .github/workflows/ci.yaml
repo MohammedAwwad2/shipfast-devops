@@ -13,9 +13,9 @@ on:
         type: choice
         options:
           - dev
-            prod
-            uat
-            sit
+          - prod
+          - uat
+          - sit
   push:
     branches: [main]
   pull_request:
@@ -30,6 +30,11 @@ env:
   IMAGE: shipfast-app
 # TODO: Define the image name. It must be lowercase.
 jobs:
+  env:
+    runs-on: ubuntu-22.04
+    steps:  
+      - name: Print message
+        run: echo " the env u are in is ${{inputs.environoment}}"
   test:
     uses: MohammedAwwad2/shipfast-devops/.github/workflows/reusable-test.yaml@main
     with:
