@@ -8,6 +8,14 @@ on:
         description: 'Node.js version'
         type: string
         default: '24'
+      environoment:
+        description: "choose env to deploy in "
+        type: choice
+        options:
+          - dev
+            prod
+            uat
+            sit
   push:
     branches: [main]
   pull_request:
