@@ -1,5 +1,6 @@
 name: ShipFast CI Pipeline
 on:
+  workflow_dispatch: 
   push:
     branches: [main]
   pull_request:
@@ -14,24 +15,9 @@ env:
 # TODO: Define the image name. It must be lowercase.
 jobs:
   test:
-    name: Test
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: app/package-lock.json
-
-      - name: Install dependencies
-        working-directory: app
-        run: npm ci
-
-      - name: Run tests
-        working-directory: app
-        run: npm test
+    uses: MohammedAwwad2/shipfast-devops/.github/workflows/reusable-test.yaml@main
+    with:
+      Node-v: ${{ inputs.node-version }}
   build-and-push:
     name: Build & Push
     runs-on: ubuntu-24.04
