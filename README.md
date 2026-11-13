@@ -14,6 +14,7 @@ advanced/ansible/                Inventory, playbook, and systemd service templa
 advanced/docker/                 Distroless build, SBOM, cosign public key, hardening report
 docker-compose.yml               Single-service Compose definition
 bootstrap.sh                     Checks local tools, installs deps, starts the app
+k8s/base/                        Kubernetes namespace, Deployment and NodePort Service
 docs/week-3/                     Assignment reports with verified command output
 ```
 
