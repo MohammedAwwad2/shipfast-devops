@@ -50,6 +50,45 @@ Two clocks: the **polling interval** (how soon Argo CD looks at Git) and the **s
 
 ## Part 5 — CI commits the image tag
 
+### What CI now does
+
+`build-and-push` exports the exact image reference as a job output:
+
+```
+ghcr.io/mohammedawwad2/shipfast-app:sha-<first 7 of commit>
+```
+
+A second job `update-manifest` then checks out `main`, rewrites the image with `yq`, and commits it as `github-actions[bot]`.
+
+### Loop prevention
+
+The bot's commit message ends with `[skip ci]`, which GitHub Actions honours for push events. Measured, not assumed:
+
+| Push | Runs before | Runs after | Delta |
+|---|---|---|---|
+| `feat: let ci commit the image tag to git` | 22 | 23 | **1** |
+| `feat: update badge text` | 23 | 24 | **1** |
+
+One push, one run, both times. Neither bot commit (`7e74f44`, `49934ed`) appears as the head SHA of any run.
+
+Also needed: `permissions: contents: write` on that job (the workflow default is `contents: read`), plus a git user name and email or the commit is rejected.
+
+### End-to-end test result
+
+Changed the badge in `app/public/index.html` to "Deployed by Argo CD", pushed, and touched nothing else:
+
+1. CI ran — all 4 jobs green ([run 44731804391](https://github.com/MohammedAwwad2/shipfast-devops/actions/runs/44731804391))
+2. Bot committed `chore: deploy ghcr.io/mohammedawwad2/shipfast-app:sha-398561f [skip ci]`
+3. Argo CD deployed it **54 seconds** later, with no `kubectl` from me
+4. Rolling update finished, app back to Synced + Healthy
+5. `curl` against the Service returns `badge">Deployed by Argo CD<`
+
+Argo CD's history records revision `49934ed` — the pipeline's own commit, not mine.
+
+### Known rough edge
+
+A docs-only push still rebuilds the image and produces a new tag commit, because the workflow has no `paths-ignore`. It works, it is just wasteful. Adding `paths-ignore: ['docs/**', '**.md']` to the push trigger would fix it.
+
 ### Written answer — rollback
 
 I roll back with Git: `git revert` the pipeline's tag commit (or commit the previous tag) and push. Argo CD sees the older tag in `k8s/base/deployment.yaml` and rolls the Deployment back for me.
@@ -65,7 +104,7 @@ Because `k8s/base/` is exactly what the Application tells Argo CD to deploy. If 
 ## Evidence checklist
 
 - [x] Argo CD pods Running in `argocd`
-- [ ] UI shows `shipfast-app` Synced + Healthy with resource tree
+- [x] UI shows `shipfast-app` Synced + Healthy with resource tree
 - [x] Part 3 two timings recorded (254s / 5s)
 - [x] Part 4 table filled in
-- [ ] CI run link + Argo CD history showing the pipeline's commit
+- [x] CI run link + Argo CD history showing the pipeline's commit (`49934ed`)
