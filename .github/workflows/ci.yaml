@@ -46,6 +46,8 @@ jobs:
     if: github.event_name == 'push'   
     permissions:
       packages: write
+    outputs:
+      image: ${{ steps.image-ref.outputs.ref }}
     steps:
       - uses: actions/checkout@v7
       - name: Set up Docker Buildx
@@ -73,3 +75,38 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Export image reference
+        id: image-ref
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "ref=${{ env.REGISTRY }}/$OWNER/${{ env.IMAGE }}:sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+  update-manifest:
+    name: Write image tag to Git
+    runs-on: ubuntu-24.04
+    needs: build-and-push
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Set image in deployment.yaml
+        run: |
+          yq -i '.spec.template.spec.containers[0].image = "${{ needs.build-and-push.outputs.image }}"' k8s/base/deployment.yaml
+          grep -n "image:" k8s/base/deployment.yaml
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet k8s/base/deployment.yaml; then
+            echo "Image tag already current. Nothing to commit."
+            exit 0
+          fi
+          git add k8s/base/deployment.yaml
+          git commit -m "chore: deploy ${{ needs.build-and-push.outputs.image }} [skip ci]"
+          git push origin main
