@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: shipfast-app
-          image: ghcr.io/mohammedawwad2/shipfast-app:sha-398561f
+          image: ghcr.io/mohammedawwad2/shipfast-app:sha-f481fb1
           ports:
             - containerPort: 3000
           env:
