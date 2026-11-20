@@ -33,8 +33,8 @@ Nothing lasting happens. The cluster drops to 1 replica, Argo CD detects that th
 
 | Attempt | What I did | Seconds until 3rd pod | Why |
 |---|---|---|---|
-| 1 | Pushed, waited, clicked nothing | | Argo CD polls Git on a timer (~3 min by default), so I wait for the next poll. |
-| 2 | Pushed, then clicked **Refresh** in the UI | | Refresh makes Argo CD check Git immediately instead of waiting for the timer. |
+| 1 | Pushed, waited, clicked nothing | **254** | Argo CD polls Git on a timer (180s default), so I waited for the next poll before it even looked. |
+| 2 | Pushed, then clicked **Refresh** in the UI | **5** | Refresh makes Argo CD check Git at once, so only the rollout time is left. |
 
 Two clocks: the **polling interval** (how soon Argo CD looks at Git) and the **sync/rollout time** (how fast Kubernetes then starts the pod). Only the first one changes between the two attempts.
 
